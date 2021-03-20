@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Sequence, Binary
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, orm
 from sqlalchemy.orm import relationship
 import pickle
 
@@ -43,17 +43,17 @@ class Model(Base):
 
     def __init__(self, name, model):
         self.name = name
-        self.model = self.serialize_deserialize(model)
+        self.model = self.serialize(model)
 
     def __repr__(self):
         return f"<Model(name='{self.name}', model='{self.model}')>"
 
-    def serialize_deserialize(self, obj):
-        if type(obj) != bytes:
-            return pickle.dumps(obj)
-        else :
-            return pickle.loads(obj)
+    def serialize(self, obj):
+        return pickle.dumps(obj)
 
+    @orm.reconstructor
+    def deserialize(self):
+        self.model = pickle.loads(self.model)
 
 
 class ModelMetaData(Base):
