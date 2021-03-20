@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from OrmMappers import *
+from ormMappers import *
 from sqlalchemy.orm import sessionmaker
 import pickle
 
@@ -11,9 +11,7 @@ session = Session()
 
 Base.metadata.create_all(engine)
 
-pickled_obj = pickle.dumps("pickledobjectstring")
-
-newmodel = Model(name='newmodel', model=pickled_obj)
+newmodel = Model(name='newmodel', model='pickledobjectstring')
 
 session.add(newmodel)
 session.commit()

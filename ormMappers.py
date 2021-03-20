@@ -2,6 +2,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Sequence, Binary
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
+import pickle
 
 Base = declarative_base()
 
@@ -40,12 +41,24 @@ class Model(Base):
     name = Column(String(length=12), nullable=False)
     model = Column(Binary)
 
+    def __init__(self, name, model):
+        self.name = name
+        self.model = self.serialize_deserialize(model)
+
     def __repr__(self):
-        return f"<User(name='{self.name}', fullname='{self.model}')>"
+        return f"<Model(name='{self.name}', model='{self.model}')>"
+
+    def serialize_deserialize(self, obj):
+        if type(obj) != bytes:
+            return pickle.dumps(obj)
+        else :
+            return pickle.loads(obj)
+
 
 
 class ModelMetaData(Base):
     __tablename__ = 'modelmetadata'
+
     id = Column(Integer, primary_key=True)
     extra = Column(String, nullable=False)
     model_id = Column(Integer, ForeignKey('model.id'))
@@ -53,7 +66,7 @@ class ModelMetaData(Base):
     model = relationship("Model", back_populates="modelmetadata")
 
     def __repr__(self):
-        return "<Address(email_address='%s')>" % self.model_id
+        return f"<ModelMetaData(extra='{self.extra}')>"
 
 
 Model.modelmetadata = relationship("ModelMetaData", order_by=ModelMetaData.id, back_populates="model")

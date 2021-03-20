@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine, text
-from OrmMappers import *
+from ormMappers import *
 from sqlalchemy.orm import sessionmaker
 
 odbc_connstr = 'mssql://localhost\SQLEXPRESS/testdb?driver=SQL+Server'
