@@ -1,7 +1,9 @@
 from sqlalchemy import create_engine, text
 from ormMappers import *
 from sqlalchemy.orm import sessionmaker
+from faker import Faker
 
+faker = Faker()
 odbc_connstr = 'mssql://localhost\SQLEXPRESS/testdb?driver=SQL+Server'
 engine = create_engine(odbc_connstr, echo=True)
 
@@ -10,16 +12,18 @@ session = Session()
 
 Base.metadata.create_all(engine)
 
-user_a = User(name='Roy', fullname='Assis', nickname='edsnickname')
-user_a.addresses = [Address(email_address='jack@google.com'),Address(email_address='jack@google.com')]
-user_b = User(name='Moshe', fullname='Assis', nickname='Assis')
+for _ in range(2):
+    first_name = faker.first_name()
+    last_name = faker.last_name()
+    full_name = f"{last_name} {first_name}"
+    mail1 = faker.email()
+    mail2 = faker.email()
 
-session.add(user_a)
-session.add(user_b)
+    user_a = User(name=first_name, fullname=full_name, nickname='nickname')
+    user_a.addresses = [Address(email_address=mail1), Address(email_address=mail2)]
+    session.add(user_a)
 
-# session.query(User).delete()
 session.commit()
 
-
-for user, addresses in session.query(User, Address).filter(User.id==Address.user_id).order_by(User.id).all():
+for user, addresses in session.query(User, Address).filter(Address.user_id == None).order_by(User.id).all():
     print(user, addresses)
