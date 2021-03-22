@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Sequence, Binary
+from sqlalchemy import Column, Integer, String, Sequence, BINARY
 from sqlalchemy import ForeignKey, orm
 from sqlalchemy.orm import relationship
 import pickle
@@ -41,7 +41,7 @@ class Model(Base):
 
     id = Column(Integer, Sequence('model_id_seq'), primary_key=True)
     name = Column(String(length=12), nullable=False)
-    model = Column(Binary)
+    model = Column(BINARY)
 
     modelmetadata = relationship("ModelMetaData",
                                  back_populates="model",
